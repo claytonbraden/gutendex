@@ -2,18 +2,21 @@ from django.db import models
 
 
 class Book(models.Model):
-    authors = models.ManyToManyField('Person')
+    authors = models.ManyToManyField('Person', related_name='books')
     bookshelves = models.ManyToManyField('Bookshelf')
     copyright = models.BooleanField(null=True)
     download_count = models.PositiveIntegerField(blank=True, null=True)
-    gutenberg_id = models.PositiveIntegerField(unique=True)
+    gutenberg_id = models.PositiveIntegerField(unique=True, primary_key=True)
     languages = models.ManyToManyField('Language')
     media_type = models.CharField(max_length=16)
     subjects = models.ManyToManyField('Subject')
     title = models.CharField(blank=True, max_length=1024, null=True)
     translators = models.ManyToManyField(
         'Person', related_name='books_translated')
-
+    gutenberg_url = models.URLField(null=True, blank=True)  # Added this field to get URL
+    cover_image_url = models.URLField(null=True, blank=True)  # Added this line to get jpg url
+    cover_image = models.ImageField(upload_to='book_covers/', null=True, blank=True)  # Added this line to get jpg image
+    
     def __str__(self):
         if self.title:
             return self.title

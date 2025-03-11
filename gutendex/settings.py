@@ -12,6 +12,7 @@ https://docs.djangoproject.com/en/1.10/ref/settings/
 
 import environ
 import os
+from pathlib import Path
 
 
 # Import environment variables
@@ -23,18 +24,24 @@ env = environ.Env(
     MANAGER_EMAILS=(list, []),
     MANAGER_NAMES=(list, []),
 )
-environ.Env.read_env()
 
 
-# Build paths inside the project like this: os.path.join(BASE_DIR, ...)
+# Define the path to the .env file
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+env_file_path = os.path.join(BASE_DIR, 'gutendex', '.env')
 
+# Read the .env file
+if os.path.exists(env_file_path):
+    env.read_env(env_file_path)
+else:
+    raise ValueError(f".env file not found at {env_file_path}")
 
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/1.10/howto/deployment/checklist/
 
 # SECURITY WARNING: keep the secret key used in production secret!
 SECRET_KEY = env('SECRET_KEY')
+print(f"SECRET_KEY from .env: {SECRET_KEY}")
 
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = env('DEBUG')
@@ -197,7 +204,6 @@ REST_FRAMEWORK = {
     ),
     'PAGE_SIZE': 32
 }
-
 
 # Cross-origin resource sharing with `corsheaders` middleware
 CORS_ALLOW_ALL_ORIGINS = True
